@@ -6,370 +6,379 @@
 <title>⚠️ System Alert</title>
 <style>
   :root{
-    --bg:#110809;
+    --bg:#050407;
     --red:#ff2b2b;
-    --dark:#0d0d0d;
-    --muted:#bdbdbd;
+    --muted:#cfcfcf;
   }
-  html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;}
   body{background:var(--bg);color:white;overflow:hidden}
-  .screen{
-    position:fixed;inset:0;
-    display:flex;align-items:center;justify-content:center;
-    transition:background 600ms ease;
+
+  .wrap{height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box}
+  .card{
+    width:min(920px,94%);max-width:1100px;padding:28px;border-radius:12px;
+    background:linear-gradient(180deg, rgba(255,0,0,0.06), rgba(0,0,0,0.6));
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    border:1px solid rgba(255,255,255,0.04);
+    display:grid;grid-template-columns:1fr 360px;gap:22px;align-items:center;
   }
 
-  /* scary overlay */
-  .virus {
-    width:100%;height:100%;
-    background:linear-gradient(180deg, rgba(255,0,0,0.06), rgba(0,0,0,0.6));
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:20px;padding:40px;box-sizing:border-box;
-  }
-  .warning {
-    display:flex;align-items:center;gap:18px;
-    transform:translateY(-20px);
-  }
-  .badge {
-    width:120px;height:120px;border-radius:50%;
-    background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.12), rgba(255,0,0,0.75));
-    display:flex;align-items:center;justify-content:center;
-    box-shadow:0 8px 30px rgba(255,0,0,0.25), inset 0 -6px 20px rgba(0,0,0,0.35);
-    border:3px solid rgba(255,255,255,0.06);
+  .left {padding:8px}
+  .title {display:flex;align-items:center;gap:14px}
+  .alert-badge{
+    width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.06), rgba(255,0,0,0.6));
+    box-shadow:0 8px 28px rgba(255,0,0,0.12);
     animation: pulse 900ms infinite;
   }
-  @keyframes pulse {
-    0% { transform: scale(1); filter: blur(0) }
-    50% { transform: scale(1.06); filter: blur(.3px) }
-    100% { transform: scale(1); filter: blur(0) }
-  }
-  .badge svg{width:68px;height:68px}
-  h1 {font-size:28px;margin:0;letter-spacing:0.6px}
-  p.lead {margin:0;color:var(--muted)}
+  @keyframes pulse {0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
+  h1{margin:0;font-size:26px}
+  p.lead{margin:6px 0 0;color:var(--muted)}
 
-  .progress-wrap{width:min(840px,92%);background:rgba(0,0,0,0.45);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);backdrop-filter: blur(2px)}
-  .bar {
-    width:100%;height:18px;background:rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;position:relative;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.6) inset;
-  }
-  .bar-inner{
-    height:100%;width:0%;background:linear-gradient(90deg,#ff6b6b,#ff2b2b);border-radius:10px;
-    transition:width 500ms linear;
-  }
-  .status {display:flex;justify-content:space-between;margin-top:10px;font-family:monospace;color:#ffd6d6;font-size:13px}
-  .logs{
-    margin-top:14px;height:170px;overflow:auto;background:rgba(0,0,0,0.6);border-radius:8px;padding:10px;font-family:monospace;font-size:13px;color:#ffdedf;
-    border:1px solid rgba(255,0,0,0.08);
-  }
-  .log-line{opacity:0.95;line-height:1.45}
-  .muted{color:#ffbfbf;font-size:12px}
+  .progress-wrap{margin-top:18px;background:rgba(0,0,0,0.55);padding:12px;border-radius:10px;border:1px solid rgba(255,0,0,0.06)}
+  .bar{width:100%;height:14px;background:rgba(255,255,255,0.06);border-radius:10px;overflow:hidden}
+  .bar-inner{height:100%;width:0;background:linear-gradient(90deg,#ff6b6b,#ff2b2b);transition:width 400ms linear}
+  .status{display:flex;justify-content:space-between;margin-top:10px;font-family:monospace;color:#ffdede;font-size:13px}
+  .logs{margin-top:12px;height:140px;overflow:auto;background:rgba(0,0,0,0.6);padding:10px;border-radius:8px;font-family:monospace;font-size:13px;color:#ffdede;border:1px solid rgba(255,0,0,0.06)}
 
-  /* reveal screen */
-  .reveal {
-    position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;
-    gap:14px;background:linear-gradient(120deg,#fff7f7,#fefefe);color:#111;padding:40px;
+  .right{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .lights{width:100%;display:flex;gap:10px;justify-content:center;align-items:center}
+  .light{
+    width:46px;height:46px;border-radius:8px;background:#220000;box-shadow:inset 0 -6px 18px rgba(0,0,0,0.6);
+    border:2px solid rgba(255,255,255,0.04);
   }
-  .reveal.show{display:flex}
-  .reveal h2{font-size:34px;margin:0}
-  .reveal p{margin:0;color:#333;font-size:16px}
-  .btn {
-    margin-top:14px;padding:10px 16px;border-radius:10px;border:0;background:#111;color:white;font-weight:600;cursor:pointer;
-    box-shadow:0 8px 30px rgba(0,0,0,0.12);
-  }
+  .light.red{background:linear-gradient(180deg,#ff6b6b,#ff2b2b);animation: blinkRed 650ms infinite}
+  .light.yellow{background:linear-gradient(180deg,#ffd66a,#ffb84a);animation: blinkYellow 900ms infinite}
+  .light.white{background:linear-gradient(180deg,#ffffff,#dcdcdc);animation: blinkWhite 1200ms infinite}
+  @keyframes blinkRed{0%{opacity:0.18;box-shadow:0 6px 22px rgba(255,0,0,0.06)}50%{opacity:1;box-shadow:0 16px 48px rgba(255,0,0,0.18)}100%{opacity:0.18}}
+  @keyframes blinkYellow{0%{opacity:0.12;box-shadow:none}50%{opacity:1;box-shadow:0 12px 30px rgba(255,180,60,0.12)}100%{opacity:0.12}}
+  @keyframes blinkWhite{0%{opacity:0.06}50%{opacity:0.9}100%{opacity:0.06}}
+
+  .controls{width:100%;display:flex;gap:8px;flex-direction:column;align-items:center}
+  .linkish{display:inline-block;padding:10px 14px;border-radius:10px;background:#111;border:1px solid rgba(255,255,255,0.04);cursor:pointer}
+  .mute{padding:8px 10px;border-radius:10px;border:0;background:rgba(255,255,255,0.06);cursor:pointer}
 
   footer{position:fixed;left:12px;bottom:12px;font-size:12px;color:rgba(255,255,255,0.35)}
 
-  /* small screens */
-  @media (max-width:520px){
-    .badge{width:86px;height:86px}
-    .badge svg{width:44px;height:44px}
-    h1{font-size:20px}
-    .logs{height:120px}
+  .freeze{
+    position:fixed;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.8));
+    display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px;z-index:1500;
+    color:white;padding:20px;box-sizing:border-box;
   }
+  .freeze.show{display:flex}
+  .freeze h2{margin:0;font-size:34px;letter-spacing:0.6px}
+  .freeze p{margin:0;color:#ffdede;font-size:15px;text-align:center;max-width:720px}
 
-  /* confetti canvas on top */
-  #confettiCanvas{position:fixed;inset:0;pointer-events:none;z-index:99}
+  .reveal{
+    position:fixed;inset:0;background:linear-gradient(120deg,#fff7f7,#fefefe);
+    display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px;z-index:1600;color:#111;padding:40px;
+  }
+  .reveal.show{display:flex}
+  .reveal h2{margin:0;font-size:32px}
+  .reveal p{margin:0;color:#333}
+
+  #confettiCanvas{position:fixed;inset:0;pointer-events:none;z-index:1700}
+
+  @media (max-width:720px){
+    .card{grid-template-columns:1fr}
+    .right{order:2}
+    .left{order:1}
+  }
 </style>
 </head>
 <body>
-<div class="screen">
-  <div class="virus" id="virusScreen" aria-live="polite">
-    <div class="warning" role="status">
-      <div class="badge" aria-hidden="true">
-        <!-- warning icon -->
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M12 2L1 21h22L12 2z" fill="white" opacity="0.92"></path>
-          <path d="M12 9v5" stroke="#8b0000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
-          <path d="M12 17h.01" stroke="#8b0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-        </svg>
+<div class="wrap">
+  <div class="card" role="main" aria-live="polite">
+    <div class="left">
+      <div class="title">
+        <div class="alert-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none">
+            <path d="M12 2L1 21h22L12 2z" fill="white" opacity="0.95"></path>
+            <path d="M12 9v5" stroke="#8b0000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M12 17h.01" stroke="#8b0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </div>
+        <div>
+          <h1>⚠️ SYSTEM ALERT</h1>
+          <p class="lead">Unusual activity detected — immediate attention required</p>
+        </div>
       </div>
-      <div>
-        <h1>⚠️ System Alert</h1>
-        <p class="lead">Critical threat detected — immediate action required</p>
+
+      <div class="progress-wrap" aria-hidden="false">
+        <div class="bar" aria-hidden="true"><div class="bar-inner" id="barInner"></div></div>
+        <div class="status">
+          <span id="statusText">Status: Scanning for threats...</span>
+          <span id="percentText">0%</span>
+        </div>
+        <div class="logs" id="logBox" aria-live="polite" aria-atomic="false"></div>
       </div>
     </div>
 
-    <div class="progress-wrap">
-      <div class="bar" aria-hidden="true">
-        <div class="bar-inner" id="progressBar"></div>
-      </div>
-      <div class="status">
-        <span id="statusText">⚠️ Your device is infected! Downloading files...</span>
-        <span id="percentText">0%</span>
+    <div class="right" aria-hidden="false">
+      <div class="lights" aria-hidden="true">
+        <div class="light red" id="lightRed"></div>
+        <div class="light yellow" id="lightYellow"></div>
+        <div class="light white" id="lightWhite"></div>
       </div>
 
-      <div class="logs" id="logbox" aria-live="polite" aria-atomic="false">
-        <!-- fake logs inserted here -->
+      <div class="controls">
+        <div class="linkish" id="startLink" role="button" tabindex="0">Start Scan (auto-start enabled)</div>
+        <div style="display:flex;gap:8px">
+          <button class="mute" id="muteBtn" aria-pressed="false">🔊 Mute</button>
+        </div>
+        <p style="margin-top:8px;color:var(--muted);font-size:13px;text-align:center">Scan & alarm attempt to start automatically. If your browser blocks sound, clicking anywhere will start audio.</p>
       </div>
     </div>
-  </div>
-
-  <div class="reveal" id="revealScreen" role="dialog" aria-hidden="true">
-    <h2>YOUR DATA HAS BEEN HACKKED!</h2>
-    <p id="revealMsg">TERA SAB DATA MERI PASS HAI HAHAHAH 💅</p>
-    <button class="btn" id="resetBtn">LOSS DATA</button>
   </div>
 </div>
 
+<div class="freeze" id="freezeOverlay" role="dialog" aria-hidden="true">
+  <h2>System Unresponsive</h2>
+  <p id="freezeMsg">Applications may not respond while the system finalizes the operation.<br><strong>Do not power off.</strong></p>
+  <p style="font-size:12px;color:#ffdede;margin-top:8px">(Press <kbd>Esc</kbd> to reveal instantly if needed)</p>
+</div>
+
+<div class="reveal" id="reveal" role="dialog" aria-hidden="true">
+  <h2>YOU HAVE LOSS YOUR DATA </h2>
+  <p id="revealText">You’ve been HACKED by your bestie DATA  💅</p>
+  <button onclick="location.reload()" style="margin-top:12px;padding:10px 14px;border-radius:10px;border:0;background:#111;color:#fff;cursor:pointer">TUGGU CHOOR</button>
+</div>
+
 <canvas id="confettiCanvas" width="800" height="600" aria-hidden="true"></canvas>
-<footer>Made with chaotic bestie energy 💖</footer>
+<footer>TUGGU CHOOR  💖</footer>
 
 <script>
-/* ========== Config ========== */
-const initialMessage = "⚠️ Your device is infected! Downloading files..."; // user's chosen fake message
-const revealText = "You’ve been hacked by your bestie 💅"; // reveal
-const autoRevealMs = 9000; // when reveal happens (ms)
-const soundEnabled = true;
+/* ======= Config ======= */
+const autoRevealMs = 8000; // auto reveal after this many ms
+const startImmediately = true; // starts scan on load
+let autoRevealTimer = null;
 
-/* ========== DOM ========= */
-const progressBar = document.getElementById('progressBar');
+/* ======= DOM ======= */
+const startLink = document.getElementById('startLink');
+const muteBtn = document.getElementById('muteBtn');
+const barInner = document.getElementById('barInner');
 const percentText = document.getElementById('percentText');
 const statusText = document.getElementById('statusText');
-const logbox = document.getElementById('logbox');
-const virusScreen = document.getElementById('virusScreen');
-const revealScreen = document.getElementById('revealScreen');
-const revealMsg = document.getElementById('revealMsg');
-const resetBtn = document.getElementById('resetBtn');
+const logBox = document.getElementById('logBox');
+const freezeOverlay = document.getElementById('freezeOverlay');
+const reveal = document.getElementById('reveal');
 
-statusText.textContent = initialMessage;
-revealMsg.textContent = revealText;
-
-/* ========== Fake progress and logs ========== */
-const fakeFiles = [
-  "system32_drivers.sys","passwords_backup.zip","photos_private.tar","bank_data.enc",
-  "keylog_2025.txt","contacts.db","secrets.tmp","evidence.mov","cat_memes_final.png"
-];
-
-function appendLog(text){
-  const line = document.createElement('div');
-  line.className = 'log-line';
-  line.textContent = text;
-  logbox.appendChild(line);
-  logbox.scrollTop = logbox.scrollHeight;
+/* ======= Logs/progress ======= */
+const fakeFiles = ["notes_backup.zip","silly_photos.png","secrets.tmp","contacts.db","meme_collection.tar","chat_dump.log"];
+function appendLog(t){
+  const d = document.createElement('div'); d.textContent = t; d.className='log-line';
+  logBox.appendChild(d); logBox.scrollTop = logBox.scrollHeight;
 }
+appendLog("Initializing quick scan...");
+appendLog("Loading lightweight signatures...");
+appendLog("Checking system integrity...");
 
-appendLog("Initializing scan...");
-appendLog("Loading threat signatures...");
-appendLog("Establishing remote connection...");
 let progress = 0;
-
-const progressSchedule = [
-  {end:20,delay:700},
-  {end:48,delay:1000},
-  {end:74,delay:900},
-  {end:92,delay:800},
-  {end:98,delay:700},
-  {end:100,delay:400}
-];
-
-let stepIndex = 0;
-let fakeLogTimer = setInterval(()=>{
-  const f = fakeFiles[Math.floor(Math.random()*fakeFiles.length)];
-  appendLog("=> Exfiltrating: " + f + " ...");
-}, 1100);
-
-function advanceProgress(){
-  if(stepIndex >= progressSchedule.length) return;
-  const target = progressSchedule[stepIndex].end;
-  const duration = progressSchedule[stepIndex].delay;
-  const start = progress;
-  const delta = target - start;
-  const startTime = performance.now();
+const schedule = [{end:18,delay:700},{end:42,delay:900},{end:68,delay:800},{end:90,delay:700},{end:98,delay:600},{end:100,delay:300}];
+let si = 0;
+function stepProgress(){
+  if(si >= schedule.length) return;
+  const target = schedule[si].end; const duration = schedule[si].delay;
+  const start = progress; const delta = target - start; const t0 = performance.now();
   function tick(now){
-    const t = Math.min(1,(now-startTime)/duration);
-    // ease-out
+    const t = Math.min(1,(now - t0)/duration);
     const eased = 1 - Math.pow(1 - t, 2.2);
-    progress = Math.round((start + delta*eased));
-    progressBar.style.width = progress + "%";
+    progress = Math.round(start + delta * eased);
+    barInner.style.width = progress + "%";
     percentText.textContent = progress + "%";
     if(t < 1) requestAnimationFrame(tick);
-    else {
-      stepIndex++;
-      if(stepIndex < progressSchedule.length){
-        setTimeout(advanceProgress, 300);
-      }
-    }
+    else { si++; if(si < schedule.length) setTimeout(stepProgress, 200); }
   }
   requestAnimationFrame(tick);
 }
-advanceProgress();
 
-/* Make logs that escalate */
-setTimeout(()=>appendLog("⚠️ Ransomware module locked target files."), 1700);
-setTimeout(()=>appendLog("Attempting privilege escalation..."), 3000);
-setTimeout(()=>appendLog("Compression: archives queued (9 files)"), 4200);
-setTimeout(()=>appendLog("Opening network channels to remote server..."), 5300);
-setTimeout(()=>appendLog("WARNING: Data integrity may be compromised."), 6100);
+/* ======= Audio (cartoon bloop / buzzer) ======= */
+let audioCtx = null;
+let master = null;
+let soundOn = true;
+let buzzerInterval = null;
 
-/* ========== sound (beeps) ========== */
-function beepSequence(){
-  if(!soundEnabled) return;
+function ensureAudio(){
+  if(audioCtx) return audioCtx;
   try{
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const now = ctx.currentTime;
-    const freqs = [600,760,400,300,220];
-    freqs.forEach((f,i)=>{
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = "sine";
-      o.frequency.value = f;
-      g.gain.value = 0.000; // start silent, ramp up slightly
-      o.connect(g); g.connect(ctx.destination);
-      o.start(now + i*0.12);
-      g.gain.linearRampToValueAtTime(0.03, now + i*0.12 + 0.01);
-      g.gain.linearRampToValueAtTime(0.0, now + i*0.12 + 0.11);
-      o.stop(now + i*0.12 + 0.12);
-    });
-  }catch(e){ /* ignore in restricted env */ }
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    master = audioCtx.createGain();
+    master.gain.value = soundOn ? 0.9 : 0.0;
+    master.connect(audioCtx.destination);
+    return audioCtx;
+  }catch(e){
+    audioCtx = null;
+    return null;
+  }
 }
-beepSequence();
 
-/* ========== Reveal ========== */
-let revealed = false;
+function playBloopPattern(){
+  if(!audioCtx) return;
+  const now = audioCtx.currentTime;
+  const freqs = [950,850,720,520];
+  freqs.forEach((f,i)=>{
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'sine'; o.frequency.value = f;
+    g.gain.value = 0.0001;
+    o.connect(g); g.connect(master);
+    o.start(now + i*0.06);
+    g.gain.linearRampToValueAtTime(0.12, now + i*0.06 + 0.01);
+    g.gain.linearRampToValueAtTime(0.0001, now + i*0.06 + 0.18);
+    o.stop(now + i*0.06 + 0.19);
+  });
+  // wobble
+  const o2 = audioCtx.createOscillator();
+  o2.type = 'triangle'; o2.frequency.value = 380;
+  const g2 = audioCtx.createGain(); g2.gain.value = 0.0001;
+  const lfo = audioCtx.createOscillator(); lfo.type='sine'; lfo.frequency.value = 4.2;
+  const lfoGain = audioCtx.createGain(); lfoGain.gain.value = 80;
+  lfo.connect(lfoGain); lfoGain.connect(o2.frequency);
+  o2.connect(g2); g2.connect(master);
+  const t = now + 0.28;
+  o2.start(t); lfo.start(t);
+  g2.gain.linearRampToValueAtTime(0.05, t + 0.01);
+  g2.gain.linearRampToValueAtTime(0.0001, t + 0.42);
+  o2.stop(t + 0.5); lfo.stop(t + 0.5);
+}
+
+function startBuzzer(){
+  const ctx = ensureAudio();
+  if(!ctx) return false;
+  playBloopPattern();
+  buzzerInterval = setInterval(playBloopPattern, 700);
+  return true;
+}
+function stopBuzzer(){
+  if(buzzerInterval){ clearInterval(buzzerInterval); buzzerInterval = null; }
+}
+
+/* small ta-da for reveal */
+function playTaDa(){
+  if(!audioCtx) return;
+  const now = audioCtx.currentTime;
+  const o1 = audioCtx.createOscillator(), o2 = audioCtx.createOscillator();
+  const g1 = audioCtx.createGain(), g2 = audioCtx.createGain();
+  o1.connect(g1); o2.connect(g2); g1.connect(master); g2.connect(master);
+  o1.frequency.value = 380; o2.frequency.value = 560; g1.gain.value = 0; g2.gain.value = 0;
+  o1.start(now); o2.start(now);
+  g1.gain.linearRampToValueAtTime(0.12, now+0.02);
+  g2.gain.linearRampToValueAtTime(0.12, now+0.02);
+  o1.frequency.exponentialRampToValueAtTime(720, now+0.5);
+  o2.frequency.exponentialRampToValueAtTime(920, now+0.5);
+  g1.gain.linearRampToValueAtTime(0, now+1.0);
+  g2.gain.linearRampToValueAtTime(0, now+1.0);
+  o1.stop(now+1.02); o2.stop(now+1.02);
+}
+
+/* ======= Confetti ======= */
+const canvas = document.getElementById('confettiCanvas');
+const ctx = canvas.getContext('2d');
+let W = canvas.width = window.innerWidth;
+let H = canvas.height = window.innerHeight;
+window.addEventListener('resize', ()=>{ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; });
+let pieces = [];
+function rand(min,max){ return Math.random()*(max-min)+min; }
+function Confetti(){ this.x=rand(0,W); this.y=rand(-H,-20); this.s=rand(6,14); this.r=rand(0,360); this.fall=rand(2,4); this.c=['#ffd14c','#ff6b6b','#6de1ff','#b28cff'][Math.floor(rand(0,4))]; }
+Confetti.prototype.draw=function(){ ctx.save(); ctx.translate(this.x,this.y); ctx.rotate(this.r*Math.PI/180); ctx.fillStyle=this.c; ctx.fillRect(-this.s/2,-this.s/2,this.s,this.s); ctx.restore();}
+Confetti.prototype.update=function(){ this.y += this.fall; this.x += Math.sin(this.y*0.01)*1.4; this.r += 2; if(this.y>H+20){ this.y=rand(-40,-10); this.x=rand(0,W); } }
+function launchConfetti(){ pieces=[]; const total=Math.min(220,Math.round(W/6)); for(let i=0;i<total;i++) pieces.push(new Confetti()); requestAnimationFrame(runConfetti); setTimeout(()=>{ pieces=[]; ctx.clearRect(0,0,W,H); },7000); }
+function runConfetti(){ ctx.clearRect(0,0,W,H); for(let p of pieces){ p.update(); p.draw(); } if(pieces.length) requestAnimationFrame(runConfetti); }
+
+/* ======= Freeze simulation ======= */
+let frozen = false;
+let logInterval = null;
+function simulateFreeze(){
+  if(frozen) return;
+  frozen = true;
+  freezeOverlay.classList.add('show');
+  freezeOverlay.setAttribute('aria-hidden','false');
+
+  // start progress and logs
+  stepProgress();
+  logInterval = setInterval(()=>{
+    if(!frozen) return;
+    const f = fakeFiles[Math.floor(Math.random()*fakeFiles.length)];
+    appendLog("Exfiltrating: " + f + " ...");
+  }, 900);
+
+  // attempt to start audio immediately
+  const audioStarted = startBuzzer();
+  // if browser blocked audio, audioStarted will be false; audio will start on first user gesture (see listener)
+  // schedule auto reveal
+  autoRevealTimer = setTimeout(doReveal, autoRevealMs);
+}
+
+/* Reveal (safe) */
 function doReveal(){
-  if(revealed) return;
-  revealed = true;
-  clearInterval(fakeLogTimer);
-  // finish progress to 100%
-  progress = 100; progressBar.style.width = "100%"; percentText.textContent = "100%";
+  if(!frozen){
+    launchReveal(); return;
+  }
+  frozen = false;
+  freezeOverlay.classList.remove('show');
+  freezeOverlay.setAttribute('aria-hidden','true');
+  if(logInterval) { clearInterval(logInterval); logInterval = null; }
+  stopBuzzer();
+  if(autoRevealTimer){ clearTimeout(autoRevealTimer); autoRevealTimer = null; }
+
+  progress = 100; barInner.style.width = "100%"; percentText.textContent = "100%";
   appendLog("Operation complete.");
   appendLog("Preparing final payload...");
 
-  // small dramatic pause then reveal
-  setTimeout(()=>{
-    // hide virus screen visually
-    virusScreen.style.transition = "opacity 700ms ease, transform 700ms ease";
-    virusScreen.style.opacity = "0";
-    virusScreen.style.transform = "scale(0.98)";
-  }, 600);
-
-  // show reveal
-  setTimeout(()=>{
-    revealScreen.classList.add('show');
-    revealScreen.setAttribute('aria-hidden','false');
-    launchConfetti();
-    playTaDa();
-  }, 1250);
+  setTimeout(()=>launchReveal(), 800);
+}
+function launchReveal(){
+  ensureAudio();
+  playTaDa();
+  launchConfetti();
+  reveal.classList.add('show');
+  reveal.setAttribute('aria-hidden','false');
 }
 
-setTimeout(doReveal, autoRevealMs); // auto trigger
+/* ======= UI handlers ======= */
+startLink.addEventListener('click', ()=>{ /* keep for manual start if needed */ simulateFreeze(); });
+startLink.addEventListener('keypress', (e)=>{ if(e.key==='Enter' || e.key===' ') simulateFreeze(); });
 
-/* Allow user to reset/prank again */
-resetBtn.addEventListener('click', ()=>{
-  // quick reload to restart prank
-  location.reload();
+muteBtn.addEventListener('click', ()=>{
+  soundOn = !soundOn;
+  muteBtn.textContent = soundOn ? '🔊 Mute' : '🔈 Unmute';
+  if(master && audioCtx) master.gain.setTargetAtTime(soundOn ? 0.9 : 0.0, audioCtx.currentTime || 0, 0.05);
 });
 
-/* Also reveal on click if someone panics (makes it friendlier) */
-document.addEventListener('keydown', (e)=>{
-  if(e.key === "Escape") doReveal();
-});
-document.addEventListener('click', (e)=>{
-  // if they click anywhere during the scary part, reveal sooner (friendly)
-  if(!revealed) doReveal();
-});
+/* Esc to reveal early */
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') doReveal(); });
 
-/* ========== Confetti (simple) ========== */
-const c = document.getElementById('confettiCanvas');
-const ctx = c.getContext('2d');
-let W = c.width = window.innerWidth;
-let H = c.height = window.innerHeight;
-window.addEventListener('resize', ()=>{ W = c.width = window.innerWidth; H = c.height = window.innerHeight; });
+/* Try to auto-start on load (visuals + audio attempt). If audio is blocked, start audio on first interaction. */
+window.addEventListener('load', ()=>{
+  // start visuals immediately
+  if(startImmediately) simulateFreeze();
 
-let pieces = [];
-function rand(min,max){ return Math.random()*(max-min)+min; }
-function ConfettiPiece(){
-  this.x = rand(0,W); this.y = rand(-H,-20); this.size = rand(6,14);
-  this.rotation = rand(0,360); this.speed = rand(1.8,4.2); this.fall = rand(2,4);
-  this.color = ["#ff4d6d","#ffd14c","#6de1ff","#b28cff","#ff9de2"][Math.floor(rand(0,5))];
-  this.tilt = rand(-0.1,0.1);
-}
-ConfettiPiece.prototype.draw = function(){
-  ctx.save();
-  ctx.translate(this.x,this.y);
-  ctx.rotate(this.rotation*Math.PI/180);
-  ctx.fillStyle = this.color;
-  ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
-  ctx.restore();
-};
-ConfettiPiece.prototype.update = function(){
-  this.y += this.fall;
-  this.x += Math.sin(this.y * 0.01) * 1.4;
-  this.rotation += this.tilt * 8;
-  if(this.y > H + 20) {
-    this.y = rand(-40,-10); this.x = rand(0,W);
-  }
-};
-
-function launchConfetti(){
-  pieces = [];
-  const total = Math.min(220, Math.round(W/6));
-  for(let i=0;i<total;i++) pieces.push(new ConfettiPiece());
-  requestAnimationFrame(runConfetti);
-  setTimeout(()=>{ pieces = []; ctx.clearRect(0,0,W,H); }, 7000); // stop after a while
-}
-function runConfetti(){
-  ctx.clearRect(0,0,W,H);
-  for(let p of pieces){ p.update(); p.draw(); }
-  if(pieces.length) requestAnimationFrame(runConfetti);
-}
-
-/* small ta-da sound for reveal */
-function playTaDa(){
-  if(!soundEnabled) return;
+  // attempt to create audio context and resume for autoplay
   try{
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const now = ctx.currentTime;
-    const o1 = ctx.createOscillator(), o2 = ctx.createOscillator();
-    const g1 = ctx.createGain(), g2 = ctx.createGain();
-    o1.connect(g1); o2.connect(g2);
-    g1.connect(ctx.destination); g2.connect(ctx.destination);
-    o1.frequency.value = 450; o2.frequency.value = 660;
-    g1.gain.value = 0; g2.gain.value = 0;
-    o1.start(now); o2.start(now);
-    g1.gain.linearRampToValueAtTime(0.06, now+0.01);
-    g2.gain.linearRampToValueAtTime(0.06, now+0.01);
-    o1.frequency.exponentialRampToValueAtTime(640, now+0.35);
-    o2.frequency.exponentialRampToValueAtTime(820, now+0.35);
-    g1.gain.linearRampToValueAtTime(0, now+0.9);
-    g2.gain.linearRampToValueAtTime(0, now+0.9);
-    o1.stop(now+1);
-    o2.stop(now+1);
+    ensureAudio();
+    if(audioCtx && typeof audioCtx.resume === 'function'){
+      audioCtx.resume().catch(()=>{ /* resume blocked */ });
+    }
   }catch(e){}
-}
+});
 
-/* Accessibility: announce reveal for screen readers */
-function announce(text){
-  const sr = document.createElement('div');
-  sr.setAttribute('aria-live','polite');
-  sr.style.position = 'absolute'; sr.style.left='-9999px';
-  sr.textContent = text;
-  document.body.appendChild(sr);
-  setTimeout(()=>document.body.removeChild(sr),2000);
+/* If browser blocked audio, start audio on first gesture */
+function startAudioOnGestureOnce(){
+  if(!audioCtx) ensureAudio();
+  // if buzzer not running but freeze is active, start buzzer now
+  if(frozen && !buzzerInterval){
+    startBuzzer();
+  }
+  document.removeEventListener('click', startAudioOnGestureOnce);
+  document.removeEventListener('keydown', startAudioOnGestureOnce);
 }
-setTimeout(()=>announce(initialMessage),500);
-setTimeout(()=>announce("Prank will reveal soon"), 2500);
-setTimeout(()=>announce("Reveal now!"), autoRevealMs + 1300);
+document.addEventListener('click', startAudioOnGestureOnce);
+document.addEventListener('keydown', startAudioOnGestureOnce);
+
+/* accessibility */
+setTimeout(()=>{ appendLog("Alert: quick scan initiated."); }, 400);
+
+/* safety: stop audio when leaving page */
+window.addEventListener('pagehide', ()=>{ try{ if(audioCtx) audioCtx.close(); }catch(e){} });
 
 </script>
 </body>
