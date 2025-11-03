@@ -3,383 +3,117 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>⚠️ System Alert</title>
+<title>Annu's Drama Meter 👑 — Annu Bhai</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Raleway:wght@300;700&display=swap');
   :root{
-    --bg:#050407;
-    --red:#ff2b2b;
-    --muted:#cfcfcf;
+    --bg1:#fff5fb; --bg2:#fff0f7; --pink:#ff4da6; --hot:#ff2b90; --muted:#6b2b3d;
   }
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;}
-  body{background:var(--bg);color:white;overflow:hidden}
-
-  .wrap{height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box}
-  .card{
-    width:min(920px,94%);max-width:1100px;padding:28px;border-radius:12px;
-    background:linear-gradient(180deg, rgba(255,0,0,0.06), rgba(0,0,0,0.6));
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-    border:1px solid rgba(255,255,255,0.04);
-    display:grid;grid-template-columns:1fr 360px;gap:22px;align-items:center;
-  }
-
-  .left {padding:8px}
-  .title {display:flex;align-items:center;gap:14px}
-  .alert-badge{
-    width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-    background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.06), rgba(255,0,0,0.6));
-    box-shadow:0 8px 28px rgba(255,0,0,0.12);
-    animation: pulse 900ms infinite;
-  }
-  @keyframes pulse {0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
-  h1{margin:0;font-size:26px}
-  p.lead{margin:6px 0 0;color:var(--muted)}
-
-  .progress-wrap{margin-top:18px;background:rgba(0,0,0,0.55);padding:12px;border-radius:10px;border:1px solid rgba(255,0,0,0.06)}
-  .bar{width:100%;height:14px;background:rgba(255,255,255,0.06);border-radius:10px;overflow:hidden}
-  .bar-inner{height:100%;width:0;background:linear-gradient(90deg,#ff6b6b,#ff2b2b);transition:width 400ms linear}
-  .status{display:flex;justify-content:space-between;margin-top:10px;font-family:monospace;color:#ffdede;font-size:13px}
-  .logs{margin-top:12px;height:140px;overflow:auto;background:rgba(0,0,0,0.6);padding:10px;border-radius:8px;font-family:monospace;font-size:13px;color:#ffdede;border:1px solid rgba(255,0,0,0.06)}
-
-  .right{display:flex;flex-direction:column;align-items:center;gap:14px}
-  .lights{width:100%;display:flex;gap:10px;justify-content:center;align-items:center}
-  .light{
-    width:46px;height:46px;border-radius:8px;background:#220000;box-shadow:inset 0 -6px 18px rgba(0,0,0,0.6);
-    border:2px solid rgba(255,255,255,0.04);
-  }
-  .light.red{background:linear-gradient(180deg,#ff6b6b,#ff2b2b);animation: blinkRed 650ms infinite}
-  .light.yellow{background:linear-gradient(180deg,#ffd66a,#ffb84a);animation: blinkYellow 900ms infinite}
-  .light.white{background:linear-gradient(180deg,#ffffff,#dcdcdc);animation: blinkWhite 1200ms infinite}
-  @keyframes blinkRed{0%{opacity:0.18;box-shadow:0 6px 22px rgba(255,0,0,0.06)}50%{opacity:1;box-shadow:0 16px 48px rgba(255,0,0,0.18)}100%{opacity:0.18}}
-  @keyframes blinkYellow{0%{opacity:0.12;box-shadow:none}50%{opacity:1;box-shadow:0 12px 30px rgba(255,180,60,0.12)}100%{opacity:0.12}}
-  @keyframes blinkWhite{0%{opacity:0.06}50%{opacity:0.9}100%{opacity:0.06}}
-
-  .controls{width:100%;display:flex;gap:8px;flex-direction:column;align-items:center}
-  .linkish{display:inline-block;padding:10px 14px;border-radius:10px;background:#111;border:1px solid rgba(255,255,255,0.04);cursor:pointer}
-  .mute{padding:8px 10px;border-radius:10px;border:0;background:rgba(255,255,255,0.06);cursor:pointer}
-
-  footer{position:fixed;left:12px;bottom:12px;font-size:12px;color:rgba(255,255,255,0.35)}
-
-  .freeze{
-    position:fixed;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.8));
-    display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px;z-index:1500;
-    color:white;padding:20px;box-sizing:border-box;
-  }
-  .freeze.show{display:flex}
-  .freeze h2{margin:0;font-size:34px;letter-spacing:0.6px}
-  .freeze p{margin:0;color:#ffdede;font-size:15px;text-align:center;max-width:720px}
-
-  .reveal{
-    position:fixed;inset:0;background:linear-gradient(120deg,#fff7f7,#fefefe);
-    display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px;z-index:1600;color:#111;padding:40px;
-  }
-  .reveal.show{display:flex}
-  .reveal h2{margin:0;font-size:32px}
-  .reveal p{margin:0;color:#333}
-
-  #confettiCanvas{position:fixed;inset:0;pointer-events:none;z-index:1700}
-
-  @media (max-width:720px){
-    .card{grid-template-columns:1fr}
-    .right{order:2}
-    .left{order:1}
-  }
+  html,body{height:100%;margin:0;font-family:Montserrat, "Segoe UI", Roboto, Arial; background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--muted);-webkit-font-smoothing:antialiased}
+  .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px;box-sizing:border-box}
+  .card{width:min(980px,96%);max-width:1100px;border-radius:20px;padding:30px;background:linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,245,250,0.85));box-shadow:0 20px 60px rgba(230,70,140,0.08);display:grid;grid-template-columns:1fr 380px;gap:26px;align-items:center;overflow:hidden;position:relative}
+  .panel-left{padding:8px}
+  h1{font-size:28px;margin:0 0 6px 0;color:var(--hot);letter-spacing:0.6px;font-weight:800}
+  .subtitle{margin:0;color:#8a4a6b;font-size:14px;font-weight:600}
+  .meter-wrap{margin-top:18px;background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,250,253,0.9));padding:18px;border-radius:14px;border:1px solid rgba(255,70,140,0.06)}
+  .bar{height:20px;background:rgba(255,80,150,0.08);border-radius:12px;overflow:hidden;position:relative}
+  .bar-inner{height:100%;width:0;background:linear-gradient(90deg,#ffd1ec,var(--pink));border-radius:12px;box-shadow:0 6px 18px rgba(255,80,150,0.08);transition:width 600ms cubic-bezier(.2,.9,.2,1)}
+  .percent{margin-top:8px;font-family:monospace;color:#a22e60;font-size:13px;display:flex;justify-content:space-between}
+  .logs{margin-top:14px;height:150px;overflow:auto;padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,240,250,0.5), rgba(255,245,250,0.55));border:1px solid rgba(255,80,150,0.04);font-family:'Raleway',monospace;font-size:14px;color:#6b2b3d}
+  .log-line{margin:6px 0;opacity:0.98}
+  .panel-right{display:flex;flex-direction:column;align-items:center;gap:18px;padding:8px}
+  .avatar{width:160px;height:160px;border-radius:18px;background:linear-gradient(135deg,#ffd9f0,#ffb3e0);display:flex;align-items:center;justify-content:center;box-shadow:0 14px 40px rgba(255,80,150,0.12);position:relative;overflow:hidden;border:4px solid rgba(255,255,255,0.6)}
+  .avatar img{width:100%;height:100%;object-fit:cover;display:block;border-radius:14px}
+  .glow{position:absolute;inset:auto -30% -40% auto;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle, rgba(255,120,200,0.18), rgba(255,120,200,0.06));transform:rotate(15deg);filter:blur(18px)}
+  .sparkles{width:100%;display:flex;justify-content:center;gap:8px}
+  .spark{width:20px;height:20px;border-radius:6px;background:linear-gradient(180deg,#fff,#ffd1ec);box-shadow:0 6px 14px rgba(255,120,180,0.12);animation:twinkle 1600ms infinite}
+  .spark:nth-child(2){animation-delay:300ms}
+  .spark:nth-child(3){animation-delay:600ms}
+  @keyframes twinkle{0%{transform:translateY(0) scale(1);opacity:0.85}50%{transform:translateY(-6px) scale(1.06);opacity:1}100%{transform:translateY(0) scale(1);opacity:0.85}}
+  .result-box{text-align:center}
+  .result-badge{font-size:22px;color:var(--hot);font-weight:800}
+  footer{position:absolute;left:18px;bottom:12px;font-size:12px;color:#8a4a6b}
+  .final-reveal{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;background:linear-gradient(180deg, rgba(255,250,255,0.95), rgba(255,245,250,0.96));z-index:200;backdrop-filter: blur(6px);opacity:0;transform:scale(0.98);pointer-events:none;transition:all 420ms ease}
+  .final-reveal.show{opacity:1;transform:scale(1);pointer-events:auto}
+  .final-box{padding:28px;border-radius:18px;text-align:center;box-shadow:0 28px 60px rgba(200,40,120,0.12);background:linear-gradient(180deg,#fff,#fff7fb)}
+  .final-title{font-size:36px;color:var(--hot);margin:0;font-weight:900}
+  .final-text{margin-top:8px;color:#6b2b3d;font-size:18px}
+  #confettiCanvas{position:fixed;inset:0;pointer-events:none;z-index:400}
+  @media (max-width:820px){ .card{grid-template-columns:1fr; padding:18px} .panel-right{order:-1;flex-direction:row;justify-content:space-between} .avatar{width:110px;height:110px} }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="card" role="main" aria-live="polite">
-    <div class="left">
-      <div class="title">
-        <div class="alert-badge" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="48" height="48" fill="none">
-            <path d="M12 2L1 21h22L12 2z" fill="white" opacity="0.95"></path>
-            <path d="M12 9v5" stroke="#8b0000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
-            <path d="M12 17h.01" stroke="#8b0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-          </svg>
-        </div>
-        <div>
-          <h1>⚠️ SYSTEM ALERT</h1>
-          <p class="lead">Unusual activity detected — immediate attention required</p>
-        </div>
+  <div class="card">
+    <div class="panel-left">
+      <h1>Annu’s Drama Meter 👑</h1>
+      <p class="subtitle">Automatic scan initiated — analyzing drama, sass & sparkle...</p>
+      <div class="meter-wrap">
+        <div class="bar"><div class="bar-inner" id="barInner"></div></div>
+        <div class="percent"><span id="statusMsg">Status: warming up</span><span id="percentText">0%</span></div>
+        <div class="logs" id="logBox"></div>
       </div>
-
-      <div class="progress-wrap" aria-hidden="false">
-        <div class="bar" aria-hidden="true"><div class="bar-inner" id="barInner"></div></div>
-        <div class="status">
-          <span id="statusText">Status: Scanning for threats...</span>
-          <span id="percentText">0%</span>
-        </div>
-        <div class="logs" id="logBox" aria-live="polite" aria-atomic="false"></div>
+      <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
+        <button class="btn" id="forceReveal">CUTTIE</button>
+        <button class="btn" id="replayBtn">Replay</button>
       </div>
     </div>
-
-    <div class="right" aria-hidden="false">
-      <div class="lights" aria-hidden="true">
-        <div class="light red" id="lightRed"></div>
-        <div class="light yellow" id="lightYellow"></div>
-        <div class="light white" id="lightWhite"></div>
+    <div class="panel-right">
+      <div class="avatar"><div class="glow"></div>
+        <img src="a2.jpg" alt="Annu DP">
       </div>
-
-      <div class="controls">
-        <div class="linkish" id="startLink" role="button" tabindex="0">Start Scan (auto-start enabled)</div>
-        <div style="display:flex;gap:8px">
-          <button class="mute" id="muteBtn" aria-pressed="false">🔊 Mute</button>
-        </div>
-        <p style="margin-top:8px;color:var(--muted);font-size:13px;text-align:center">Scan & alarm attempt to start automatically. If your browser blocks sound, clicking anywhere will start audio.</p>
+      <div class="sparkles"><div class="spark"></div><div class="spark"></div><div class="spark"></div></div>
+      <div class="result-box">
+        <div class="result-badge" id="resultBadge">RESULT: --</div>
+        <div id="resultSub">Analyzing beauty & drama...</div>
+      </div>
+      <div style="font-size:13px;color:#b45a7d;margin-top:6px;text-align:center">Made  by <strong>TUGGU</strong> 💅</div>
+    </div>
+    <div class="final-reveal" id="finalReveal">
+      <div class="final-box">
+        <div class="final-title" id="finalTitle">RESULT: --</div>
+        <div class="final-text" id="finalText">--</div>
       </div>
     </div>
+    <canvas id="confettiCanvas"></canvas>
+    <footer>© Annu’s Drama Meter • built by TUGGU</footer>
   </div>
 </div>
 
-<div class="freeze" id="freezeOverlay" role="dialog" aria-hidden="true">
-  <h2>System Unresponsive</h2>
-  <p id="freezeMsg">Applications may not respond while the system finalizes the operation.<br><strong>Do not power off.</strong></p>
-  <p style="font-size:12px;color:#ffdede;margin-top:8px">(Press <kbd>Esc</kbd> to reveal instantly if needed)</p>
-</div>
-
-<div class="reveal" id="reveal" role="dialog" aria-hidden="true">
-  <h2>YOU HAVE LOSS YOUR DATA </h2>
-  <p id="revealText">You’ve been HACKED by your bestie DATA  💅</p>
-  <button onclick="location.reload()" style="margin-top:12px;padding:10px 14px;border-radius:10px;border:0;background:#111;color:#fff;cursor:pointer">TUGGU CHOOR</button>
-</div>
-
-<canvas id="confettiCanvas" width="800" height="600" aria-hidden="true"></canvas>
-<footer>TUGGU CHOOR  💖</footer>
-
 <script>
-/* ======= Config ======= */
-const autoRevealMs = 8000; // auto reveal after this many ms
-const startImmediately = true; // starts scan on load
-let autoRevealTimer = null;
-
-/* ======= DOM ======= */
-const startLink = document.getElementById('startLink');
-const muteBtn = document.getElementById('muteBtn');
-const barInner = document.getElementById('barInner');
-const percentText = document.getElementById('percentText');
-const statusText = document.getElementById('statusText');
-const logBox = document.getElementById('logBox');
-const freezeOverlay = document.getElementById('freezeOverlay');
-const reveal = document.getElementById('reveal');
-
-/* ======= Logs/progress ======= */
-const fakeFiles = ["notes_backup.zip","silly_photos.png","secrets.tmp","contacts.db","meme_collection.tar","chat_dump.log"];
-function appendLog(t){
-  const d = document.createElement('div'); d.textContent = t; d.className='log-line';
-  logBox.appendChild(d); logBox.scrollTop = logBox.scrollHeight;
-}
-appendLog("Initializing quick scan...");
-appendLog("Loading lightweight signatures...");
-appendLog("Checking system integrity...");
-
-let progress = 0;
-const schedule = [{end:18,delay:700},{end:42,delay:900},{end:68,delay:800},{end:90,delay:700},{end:98,delay:600},{end:100,delay:300}];
-let si = 0;
-function stepProgress(){
-  if(si >= schedule.length) return;
-  const target = schedule[si].end; const duration = schedule[si].delay;
-  const start = progress; const delta = target - start; const t0 = performance.now();
-  function tick(now){
-    const t = Math.min(1,(now - t0)/duration);
-    const eased = 1 - Math.pow(1 - t, 2.2);
-    progress = Math.round(start + delta * eased);
-    barInner.style.width = progress + "%";
-    percentText.textContent = progress + "%";
-    if(t < 1) requestAnimationFrame(tick);
-    else { si++; if(si < schedule.length) setTimeout(stepProgress, 200); }
-  }
-  requestAnimationFrame(tick);
-}
-
-/* ======= Audio (cartoon bloop / buzzer) ======= */
-let audioCtx = null;
-let master = null;
-let soundOn = true;
-let buzzerInterval = null;
-
-function ensureAudio(){
-  if(audioCtx) return audioCtx;
-  try{
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    master = audioCtx.createGain();
-    master.gain.value = soundOn ? 0.9 : 0.0;
-    master.connect(audioCtx.destination);
-    return audioCtx;
-  }catch(e){
-    audioCtx = null;
-    return null;
-  }
-}
-
-function playBloopPattern(){
-  if(!audioCtx) return;
-  const now = audioCtx.currentTime;
-  const freqs = [950,850,720,520];
-  freqs.forEach((f,i)=>{
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.type = 'sine'; o.frequency.value = f;
-    g.gain.value = 0.0001;
-    o.connect(g); g.connect(master);
-    o.start(now + i*0.06);
-    g.gain.linearRampToValueAtTime(0.12, now + i*0.06 + 0.01);
-    g.gain.linearRampToValueAtTime(0.0001, now + i*0.06 + 0.18);
-    o.stop(now + i*0.06 + 0.19);
-  });
-  // wobble
-  const o2 = audioCtx.createOscillator();
-  o2.type = 'triangle'; o2.frequency.value = 380;
-  const g2 = audioCtx.createGain(); g2.gain.value = 0.0001;
-  const lfo = audioCtx.createOscillator(); lfo.type='sine'; lfo.frequency.value = 4.2;
-  const lfoGain = audioCtx.createGain(); lfoGain.gain.value = 80;
-  lfo.connect(lfoGain); lfoGain.connect(o2.frequency);
-  o2.connect(g2); g2.connect(master);
-  const t = now + 0.28;
-  o2.start(t); lfo.start(t);
-  g2.gain.linearRampToValueAtTime(0.05, t + 0.01);
-  g2.gain.linearRampToValueAtTime(0.0001, t + 0.42);
-  o2.stop(t + 0.5); lfo.stop(t + 0.5);
-}
-
-function startBuzzer(){
-  const ctx = ensureAudio();
-  if(!ctx) return false;
-  playBloopPattern();
-  buzzerInterval = setInterval(playBloopPattern, 700);
-  return true;
-}
-function stopBuzzer(){
-  if(buzzerInterval){ clearInterval(buzzerInterval); buzzerInterval = null; }
-}
-
-/* small ta-da for reveal */
-function playTaDa(){
-  if(!audioCtx) return;
-  const now = audioCtx.currentTime;
-  const o1 = audioCtx.createOscillator(), o2 = audioCtx.createOscillator();
-  const g1 = audioCtx.createGain(), g2 = audioCtx.createGain();
-  o1.connect(g1); o2.connect(g2); g1.connect(master); g2.connect(master);
-  o1.frequency.value = 380; o2.frequency.value = 560; g1.gain.value = 0; g2.gain.value = 0;
-  o1.start(now); o2.start(now);
-  g1.gain.linearRampToValueAtTime(0.12, now+0.02);
-  g2.gain.linearRampToValueAtTime(0.12, now+0.02);
-  o1.frequency.exponentialRampToValueAtTime(720, now+0.5);
-  o2.frequency.exponentialRampToValueAtTime(920, now+0.5);
-  g1.gain.linearRampToValueAtTime(0, now+1.0);
-  g2.gain.linearRampToValueAtTime(0, now+1.0);
-  o1.stop(now+1.02); o2.stop(now+1.02);
-}
-
-/* ======= Confetti ======= */
-const canvas = document.getElementById('confettiCanvas');
-const ctx = canvas.getContext('2d');
-let W = canvas.width = window.innerWidth;
-let H = canvas.height = window.innerHeight;
-window.addEventListener('resize', ()=>{ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; });
-let pieces = [];
-function rand(min,max){ return Math.random()*(max-min)+min; }
-function Confetti(){ this.x=rand(0,W); this.y=rand(-H,-20); this.s=rand(6,14); this.r=rand(0,360); this.fall=rand(2,4); this.c=['#ffd14c','#ff6b6b','#6de1ff','#b28cff'][Math.floor(rand(0,4))]; }
-Confetti.prototype.draw=function(){ ctx.save(); ctx.translate(this.x,this.y); ctx.rotate(this.r*Math.PI/180); ctx.fillStyle=this.c; ctx.fillRect(-this.s/2,-this.s/2,this.s,this.s); ctx.restore();}
-Confetti.prototype.update=function(){ this.y += this.fall; this.x += Math.sin(this.y*0.01)*1.4; this.r += 2; if(this.y>H+20){ this.y=rand(-40,-10); this.x=rand(0,W); } }
-function launchConfetti(){ pieces=[]; const total=Math.min(220,Math.round(W/6)); for(let i=0;i<total;i++) pieces.push(new Confetti()); requestAnimationFrame(runConfetti); setTimeout(()=>{ pieces=[]; ctx.clearRect(0,0,W,H); },7000); }
-function runConfetti(){ ctx.clearRect(0,0,W,H); for(let p of pieces){ p.update(); p.draw(); } if(pieces.length) requestAnimationFrame(runConfetti); }
-
-/* ======= Freeze simulation ======= */
-let frozen = false;
-let logInterval = null;
-function simulateFreeze(){
-  if(frozen) return;
-  frozen = true;
-  freezeOverlay.classList.add('show');
-  freezeOverlay.setAttribute('aria-hidden','false');
-
-  // start progress and logs
-  stepProgress();
-  logInterval = setInterval(()=>{
-    if(!frozen) return;
-    const f = fakeFiles[Math.floor(Math.random()*fakeFiles.length)];
-    appendLog("Exfiltrating: " + f + " ...");
-  }, 900);
-
-  // attempt to start audio immediately
-  const audioStarted = startBuzzer();
-  // if browser blocked audio, audioStarted will be false; audio will start on first user gesture (see listener)
-  // schedule auto reveal
-  autoRevealTimer = setTimeout(doReveal, autoRevealMs);
-}
-
-/* Reveal (safe) */
-function doReveal(){
-  if(!frozen){
-    launchReveal(); return;
-  }
-  frozen = false;
-  freezeOverlay.classList.remove('show');
-  freezeOverlay.setAttribute('aria-hidden','true');
-  if(logInterval) { clearInterval(logInterval); logInterval = null; }
-  stopBuzzer();
-  if(autoRevealTimer){ clearTimeout(autoRevealTimer); autoRevealTimer = null; }
-
-  progress = 100; barInner.style.width = "100%"; percentText.textContent = "100%";
-  appendLog("Operation complete.");
-  appendLog("Preparing final payload...");
-
-  setTimeout(()=>launchReveal(), 800);
-}
-function launchReveal(){
-  ensureAudio();
-  playTaDa();
-  launchConfetti();
-  reveal.classList.add('show');
-  reveal.setAttribute('aria-hidden','false');
-}
-
-/* ======= UI handlers ======= */
-startLink.addEventListener('click', ()=>{ /* keep for manual start if needed */ simulateFreeze(); });
-startLink.addEventListener('keypress', (e)=>{ if(e.key==='Enter' || e.key===' ') simulateFreeze(); });
-
-muteBtn.addEventListener('click', ()=>{
-  soundOn = !soundOn;
-  muteBtn.textContent = soundOn ? '🔊 Mute' : '🔈 Unmute';
-  if(master && audioCtx) master.gain.setTargetAtTime(soundOn ? 0.9 : 0.0, audioCtx.currentTime || 0, 0.05);
-});
-
-/* Esc to reveal early */
-document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') doReveal(); });
-
-/* Try to auto-start on load (visuals + audio attempt). If audio is blocked, start audio on first interaction. */
-window.addEventListener('load', ()=>{
-  // start visuals immediately
-  if(startImmediately) simulateFreeze();
-
-  // attempt to create audio context and resume for autoplay
-  try{
-    ensureAudio();
-    if(audioCtx && typeof audioCtx.resume === 'function'){
-      audioCtx.resume().catch(()=>{ /* resume blocked */ });
-    }
-  }catch(e){}
-});
-
-/* If browser blocked audio, start audio on first gesture */
-function startAudioOnGestureOnce(){
-  if(!audioCtx) ensureAudio();
-  // if buzzer not running but freeze is active, start buzzer now
-  if(frozen && !buzzerInterval){
-    startBuzzer();
-  }
-  document.removeEventListener('click', startAudioOnGestureOnce);
-  document.removeEventListener('keydown', startAudioOnGestureOnce);
-}
-document.addEventListener('click', startAudioOnGestureOnce);
-document.addEventListener('keydown', startAudioOnGestureOnce);
-
-/* accessibility */
-setTimeout(()=>{ appendLog("Alert: quick scan initiated."); }, 400);
-
-/* safety: stop audio when leaving page */
-window.addEventListener('pagehide', ()=>{ try{ if(audioCtx) audioCtx.close(); }catch(e){} });
-
+const AUTO_MS = 7000;
+const LOG_INTERVAL = 850;
+const checks = [
+  "Counting eye rolls…","Measuring sass levels…","Assessing dramatic pauses…",
+  "Calibrating hair flip intensity…","Scanning for glitter residue…",
+  "Checking for misplaced crowns…","Polling the mirror for opinions…"
+];
+const results = [
+  {title: "RESULT: 110% Drama Queen ✨", text: "1000% Gorgeous • 500% Sass • Unlimited Sparkle"},
+  {title: "RESULT: 120% Extra Babe 💖", text: "Dangerously glamorous • Flawless mic drop capability"}
+];
+const barInner=document.getElementById('barInner'),percentText=document.getElementById('percentText'),
+statusMsg=document.getElementById('statusMsg'),logBox=document.getElementById('logBox'),
+finalReveal=document.getElementById('finalReveal'),finalTitle=document.getElementById('finalTitle'),
+finalText=document.getElementById('finalText'),resultBadge=document.getElementById('resultBadge'),
+resultSub=document.getElementById('resultSub'),forceReveal=document.getElementById('forceReveal'),
+replayBtn=document.getElementById('replayBtn');
+let progress=0,logTimer=null;
+function appendLog(t){const d=document.createElement('div');d.textContent=t;d.className='log-line';logBox.appendChild(d);logBox.scrollTop=logBox.scrollHeight;}
+function startScan(){progress=0;barInner.style.width="0%";percentText.textContent="0%";logBox.innerHTML='';
+finalReveal.classList.remove('show');appendLog("Starting Annu's Drama Meter v1.2");
+let start=performance.now();function frame(now){let t=Math.min(1,(now-start)/AUTO_MS);
+let eased=1-Math.pow(1-t,2.2);progress=Math.round(eased*100);barInner.style.width=progress+"%";
+percentText.textContent=progress+"%";if(t<1){requestAnimationFrame(frame);}else{revealResult();}}
+requestAnimationFrame(frame);let i=0;logTimer=setInterval(()=>{appendLog(checks[i%checks.length]);i++;},LOG_INTERVAL);}
+function revealResult(){if(logTimer){clearInterval(logTimer);logTimer=null;}
+const r=results[Math.floor(Math.random()*results.length)];
+finalTitle.textContent=r.title;finalText.innerHTML=r.text;resultBadge.textContent=r.title;resultSub.textContent=r.text;
+finalReveal.classList.add('show');playAnnuBhai();}
+function playAnnuBhai(){try{const utter=new SpeechSynthesisUtterance("Annu Bhai");
+utter.pitch=1.2;utter.rate=0.95;window.speechSynthesis.speak(utter);}catch(e){}}
+forceReveal.onclick=()=>revealResult();replayBtn.onclick=()=>startScan();window.onload=()=>startScan();
 </script>
 </body>
 </html>
